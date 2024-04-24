@@ -32,3 +32,26 @@ body {
   border: none;
   display: none;
 }
+
+.chartButton {
+  background-color: greenyellow;
+  color: white;
+  border-radius: 15px;
+  padding: 10px;
+  border: none;
+}
+
+#pieChartDiv {
+  display: none;
+  position: absolute;
+  bottom: 120px;
+  left: 30px;
+  height: 55vh;
+  width: 40vw;
+}
+
+#pie-chart {
+  flex: 1;
+  height: 55vh;
+  width: 40vw;
+}

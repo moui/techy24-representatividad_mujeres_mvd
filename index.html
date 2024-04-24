@@ -30,9 +30,14 @@
         >
           Comparar espacios públicos
         </button>
-        <button id="cancelSwipe" class="cancelButton">Cancel Swipe</button>
+        <button id="cancelBtn" class="cancelButton">Cerrar</button>
+        <button id="btnPieChart" class="chartButton" onclick="viewPieChart()">Mostrar gráfico</button>
+        </button>
       </div>
     </arcgis-map>
+    <div id="pieChartDiv">
+      <arcgis-charts-pie-chart id="pie-chart"></arcgis-charts-pie-chart>
+    </div>
     <script type="module" src="src/main.ts"></script>
   </body>
 </html>

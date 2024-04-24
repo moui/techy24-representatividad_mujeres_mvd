@@ -32,6 +32,10 @@ El objetivo de este proyecto es presentar en el evento Techy en ICA que hacemos 
 
     Agregamos interactividad al mapa, permitiendo comparar la representatividad de mujeres en calles y espacios públicos.
 
+6. Agregar una gráfica
+
+    Agregamos una gráfica que muestra los porcentajes de las categorías a las que pertenecen las mujeres cuyos nombres se encuentran en las calles.
+
 ## Recursos
 
 - [ArcGIS Maps SDK for JavaScript](https://developers.arcgis.com/javascript/latest/)

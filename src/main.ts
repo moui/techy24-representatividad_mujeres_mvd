@@ -1,6 +1,8 @@
 import "./style.css";
 
 import { defineCustomElements } from "@arcgis/map-components/dist/loader";
+import { defineCustomElements as defineChartsElements } from '@arcgis/charts-components/dist/loader';
+import { PieChartModel } from "@arcgis/charts-model";
 import * as intl from "@arcgis/core/intl";
 import FeatureLayer from "@arcgis/core/layers/FeatureLayer";
 import SimpleRenderer from "@arcgis/core/renderers/SimpleRenderer";
@@ -8,7 +10,10 @@ import SimpleFillSymbol from "@arcgis/core/symbols/SimpleFillSymbol";
 import SimpleLineSymbol from "@arcgis/core/symbols/SimpleLineSymbol";
 import Swipe from "@arcgis/core/widgets/Swipe";
 
+
 defineCustomElements(window, { resourcesUrl: "https://js.arcgis.com/map-components/4.29/assets" });
+defineChartsElements(window, { resourcesUrl: 'https://js.arcgis.com/charts-components/4.29/t9n' });
+
 
 let swipe: Swipe | null = null;
 // Obtenemos el elemento del mapa para poder manejarlo en el código
@@ -129,9 +134,10 @@ const compareCalles = () => {
   swipe.trailingLayers.add(representatividadCallesMontevideo);
   representatividadCallesMontevideo.visible = true;
   mapElement?.view.ui.add(swipe);
-  document.getElementById('cancelSwipe')!.style.display = 'block';
+  document.getElementById('cancelBtn')!.style.display = 'block';
   document.getElementById('btnComparaCalles')!.style.display = 'none';
   document.getElementById('btnComparaEspPub')!.style.display = 'none';
+  document.getElementById('btnPieChart')!.style.display = 'none';
 };
 (window as any).compareCalles = compareCalles;
 
@@ -141,7 +147,7 @@ const compareEspPub = () => {
     mapElement?.view.ui.remove(swipe);
     swipe.destroy();
     // Hide the cancel button
-    document.getElementById('cancelSwipe')!.style.display = 'none';
+    document.getElementById('cancelBtn')!.style.display = 'none';
     // Reset the swipe variable
     swipe = null;
   }
@@ -158,22 +164,55 @@ const compareEspPub = () => {
   swipe.trailingLayers.add(representatividadEspaciosMontevideo);
   representatividadEspaciosMontevideo.visible = true;
   mapElement?.view.ui.add(swipe);
-  document.getElementById('cancelSwipe')!.style.display = 'block';
+  document.getElementById('cancelBtn')!.style.display = 'block';
   document.getElementById('btnComparaCalles')!.style.display = 'none';
   document.getElementById('btnComparaEspPub')!.style.display = 'none';
+  document.getElementById('btnPieChart')!.style.display = 'none';
 };
 (window as any).compareEspPub = compareEspPub;
 
-document.getElementById('cancelSwipe')!.addEventListener('click', () => {
+document.getElementById('cancelBtn')!.addEventListener('click', () => {
   if (swipe) {
     // Remove the swipe from the view
     mapElement?.view.ui.remove(swipe);
     swipe.destroy();
-    // Hide the cancel button
-    document.getElementById('cancelSwipe')!.style.display = 'none';
-    document.getElementById('btnComparaCalles')!.style.display = 'block';
-    document.getElementById('btnComparaEspPub')!.style.display = 'block';
-    // Reset the swipe variable
     swipe = null;
   }
+  const pieChartDiv = document.getElementById('pieChartDiv') as HTMLDivElement;
+  if (pieChartDiv.style.display === "block") {
+    pieChartDiv.style.display = "none";
+  }
+  document.getElementById('cancelBtn')!.style.display = 'none';
+  document.getElementById('btnComparaCalles')!.style.display = 'block';
+  document.getElementById('btnComparaEspPub')!.style.display = 'block';
+  document.getElementById('btnPieChart')!.style.display = 'block';
 });
+
+const viewPieChart = async () => {
+  document.getElementById('cancelBtn')!.style.display = 'block';
+  document.getElementById('btnComparaCalles')!.style.display = 'none';
+  document.getElementById('btnComparaEspPub')!.style.display = 'none';
+  document.getElementById('btnPieChart')!.style.display = 'none';
+  const pieChartDiv = document.getElementById('pieChartDiv') as HTMLDivElement;
+  pieChartDiv.style.display = "block";
+  const pieChartElement = document.querySelector("arcgis-charts-pie-chart");
+
+  const pieChartModel = new PieChartModel({
+    layer: representatividadCallesMontevideo,
+    mode: 'category',
+    category: "SUBCATEGO",
+  });
+
+  pieChartModel.showDataLabels = true;
+  pieChartModel.title = "Porcentaje de Mujeres con Representatividad en Calles de Montevideo por Categoría",
+    pieChartModel.legendTitleText = "Categorías";
+  pieChartModel.legendPosition = "right";
+
+  const pieChartConfig = await pieChartModel.config;
+
+  if (pieChartElement) {
+    pieChartElement.config = pieChartConfig;
+    pieChartElement.layer = representatividadCallesMontevideo;
+  }
+}
+(window as any).viewPieChart = viewPieChart;
