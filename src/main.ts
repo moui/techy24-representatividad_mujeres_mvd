@@ -1,24 +1,23 @@
-import './style.css'
-import typescriptLogo from './typescript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.ts'
+import "./style.css";
 
-document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://www.typescriptlang.org/" target="_blank">
-      <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
-    </a>
-    <h1>Vite + TypeScript</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite and TypeScript logos to learn more
-    </p>
-  </div>
-`
+import { defineCustomElements } from "@arcgis/map-components/dist/loader";
+import esriConfig from "@arcgis/core/config";
+import * as intl from "@arcgis/core/intl";
+defineCustomElements(window, { resourcesUrl: "https://js.arcgis.com/map-components/4.29/assets" });
 
-setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
+// Obtenemos el elemento del mapa para poder manejarlo en el código
+const mapElement = document.querySelector('arcgis-map');
+
+// Creamos un div con el logo de ICA y que lo agregaremos a la UI del mapa
+const logoIca = document.createElement('div');
+logoIca.innerHTML = `<img src="/logo-ica.png" style="width: 150px; height: auto;">`;
+logoIca.style.boxShadow = "none";
+
+// Configuramos la API de ArcGIS en español
+intl.setLocale("es");
+
+// Cuando el mapa esta listo, centrarlo y acercarlo a la ubicación de Montevideo y agregar el logo de ICA
+mapElement?.addEventListener('arcgisViewReadyChange', () => {
+  mapElement?.view.goTo({ zoom: 12, center: [-56.2151, -34.8182] });
+  mapElement?.view?.ui.add(logoIca, "bottom-left");
+});
