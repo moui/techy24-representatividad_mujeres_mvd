@@ -8,3 +8,27 @@ body {
   width: 100vw;
   height: 100vh;
 }
+
+.buttonsDiv {
+  display: none;
+  justify-content: center;
+  gap: 10px;
+  border: none;
+}
+
+.compareButton {
+  background-color: blueviolet;
+  color: white;
+  border-radius: 15px;
+  padding: 10px;
+  border: none;
+}
+
+.cancelButton {
+  background-color: rgb(185, 60, 60);
+  color: white;
+  border-radius: 15px;
+  padding: 10px;
+  border: none;
+  display: none;
+}

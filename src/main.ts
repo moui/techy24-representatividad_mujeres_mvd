@@ -1,16 +1,16 @@
 import "./style.css";
 
 import { defineCustomElements } from "@arcgis/map-components/dist/loader";
-import esriConfig from "@arcgis/core/config";
 import * as intl from "@arcgis/core/intl";
 import FeatureLayer from "@arcgis/core/layers/FeatureLayer";
 import SimpleRenderer from "@arcgis/core/renderers/SimpleRenderer";
 import SimpleFillSymbol from "@arcgis/core/symbols/SimpleFillSymbol";
 import SimpleLineSymbol from "@arcgis/core/symbols/SimpleLineSymbol";
-
+import Swipe from "@arcgis/core/widgets/Swipe";
 
 defineCustomElements(window, { resourcesUrl: "https://js.arcgis.com/map-components/4.29/assets" });
 
+let swipe: Swipe | null = null;
 // Obtenemos el elemento del mapa para poder manejarlo en el código
 const mapElement = document.querySelector('arcgis-map');
 
@@ -90,10 +90,90 @@ representatividadEspaciosMontevideo.renderer = new SimpleRenderer({
   })
 });
 
+// Tomamos el div con los botones de comparación y lo agregamos a la UI del mapa
+const comparacionButtonsDiv = document.getElementById('compareBtns') as HTMLDivElement;
+
 // Cuando el mapa esta listo, centrarlo y acercarlo a la ubicación de Montevideo y agregar el logo de ICA
 // Agregamos las capas al mapa
 mapElement?.addEventListener('arcgisViewReadyChange', () => {
   mapElement?.view.goTo({ zoom: 12, center: [-56.2151, -34.8182] });
   mapElement?.view?.ui.add(logoIca, "bottom-left");
+  mapElement?.view?.ui.add(comparacionButtonsDiv, "top-right");
+  comparacionButtonsDiv.style.display = "flex";
+  comparacionButtonsDiv.style.boxShadow = "none";
   mapElement?.map.addMany([callesMontevideo, espaciosPublicosMontevideo, representatividadCallesMontevideo, representatividadEspaciosMontevideo]);
+});
+
+// Declaramos las funciones para manejar las comparaciones
+
+const compareCalles = () => {
+  if (swipe) {
+    // Remove the swipe from the view
+    mapElement?.view.ui.remove(swipe);
+    swipe.destroy();
+    // Hide the cancel button
+    document.getElementById('cancelSwipe')!.style.display = 'none';
+    // Reset the swipe variable
+    swipe = null;
+  }
+  mapElement?.map.layers.forEach(layer => {
+    layer.visible = false;
+  })
+  swipe = new Swipe({
+    view: mapElement?.view,
+    position: 50
+  });
+  swipe.position = 50;
+  swipe.leadingLayers.addMany([callesMontevideo, representatividadCallesMontevideo]);
+  callesMontevideo.visible = true;
+  swipe.trailingLayers.add(representatividadCallesMontevideo);
+  representatividadCallesMontevideo.visible = true;
+  mapElement?.view.ui.add(swipe);
+  document.getElementById('cancelSwipe')!.style.display = 'block';
+  document.getElementById('btnComparaCalles')!.style.display = 'none';
+  document.getElementById('btnComparaEspPub')!.style.display = 'none';
+};
+(window as any).compareCalles = compareCalles;
+
+const compareEspPub = () => {
+  if (swipe) {
+    // Remove the swipe from the view
+    mapElement?.view.ui.remove(swipe);
+    swipe.destroy();
+    // Hide the cancel button
+    document.getElementById('cancelSwipe')!.style.display = 'none';
+    // Reset the swipe variable
+    swipe = null;
+  }
+  mapElement?.map.layers.forEach(layer => {
+    layer.visible = false;
+  })
+  swipe = new Swipe({
+    view: mapElement?.view,
+    position: 50
+  });
+  swipe.position = 50;
+  swipe.leadingLayers.addMany([espaciosPublicosMontevideo, representatividadEspaciosMontevideo]);
+  espaciosPublicosMontevideo.visible = true;
+  swipe.trailingLayers.add(representatividadEspaciosMontevideo);
+  representatividadEspaciosMontevideo.visible = true;
+  mapElement?.view.ui.add(swipe);
+  document.getElementById('cancelSwipe')!.style.display = 'block';
+  document.getElementById('btnComparaCalles')!.style.display = 'none';
+  document.getElementById('btnComparaEspPub')!.style.display = 'none';
+};
+(window as any).compareEspPub = compareEspPub;
+
+document.getElementById('cancelSwipe')!.addEventListener('click', () => {
+  if (swipe) {
+    // Remove the swipe from the view
+    mapElement?.view.ui.remove(swipe);
+    swipe.destroy();
+    // Hide the cancel button
+    document.getElementById('cancelSwipe')!.style.display = 'none';
+    document.getElementById('btnComparaCalles')!.style.display = 'block';
+    document.getElementById('btnComparaEspPub')!.style.display = 'block';
+    // Reset the swipe variable
+    swipe = null;
+  }
 });

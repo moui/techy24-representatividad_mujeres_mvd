@@ -7,6 +7,7 @@
       Techy en ICA - Demo - Representatividad de mujeres en Montevideo
     </title>
     <link rel="icon" href="data:;base64,=" />
+    <link rel="stylesheet" href="src/styles.css" />
   </head>
   <body>
     <arcgis-map basemap="topo">
@@ -14,6 +15,23 @@
         <arcgis-layer-list />
       </arcgis-expand>
       <arcgis-basemap-toggle position="bottom-right" />
+      <div id="compareBtns" class="buttonsDiv">
+        <button
+          id="btnComparaCalles"
+          class="compareButton"
+          onclick="compareCalles()"
+        >
+          Comparar calles
+        </button>
+        <button
+          id="btnComparaEspPub"
+          class="compareButton"
+          onclick="compareEspPub()"
+        >
+          Comparar espacios públicos
+        </button>
+        <button id="cancelSwipe" class="cancelButton">Cancel Swipe</button>
+      </div>
     </arcgis-map>
     <script type="module" src="src/main.ts"></script>
   </body>
