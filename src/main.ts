@@ -16,6 +16,9 @@ defineChartsElements(window, { resourcesUrl: 'https://js.arcgis.com/charts-compo
 
 
 let swipe: Swipe | null = null;
+
+let highlightSelect: __esri.Handle | null = null;
+
 // Obtenemos el elemento del mapa para poder manejarlo en el código
 const mapElement = document.querySelector('arcgis-map');
 
@@ -214,5 +217,15 @@ const viewPieChart = async () => {
     pieChartElement.config = pieChartConfig;
     pieChartElement.layer = representatividadCallesMontevideo;
   }
+
+  const featureLayerView = mapElement?.view.layerViews.find(layerView => layerView.layer === representatividadCallesMontevideo) as __esri.FeatureLayerView;
+
+  pieChartElement?.addEventListener('arcgisChartsSelectionComplete', async (event) => {
+    if (highlightSelect) {
+      highlightSelect.remove();
+    }
+    highlightSelect = featureLayerView.highlight(event.detail.selectionOIDs);
+  });
+
 }
 (window as any).viewPieChart = viewPieChart;
